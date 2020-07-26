@@ -1,4 +1,5 @@
-const port = process.env.PORT || 5000;
+const localPort = 5000;
+const port = process.env.PORT || localPort;
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
@@ -20,7 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:room", (req, res) => {
-  res.render("room", { roomId: req.params.room, port: port });
+  res.render("room", { roomId: req.params.room, port: localPort });
 });
 
 io.on("connection", (socket) => {

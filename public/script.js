@@ -1,10 +1,16 @@
 const socket = io("/");
 const videoGrid = document.getElementById("video-grid");
-const myPeer = new Peer(undefined, {
+const peerOptions = {
   host: "/",
-  //port: PORT,
   path: "/peerjs/myapp"
-});
+};
+
+if (PORT == 5000) {
+  // production does not need this
+  peerOptions["port"] = PORT;
+}
+
+const myPeer = new Peer(undefined, peerOptions);
 
 const myVideo = document.createElement("video");
 myVideo.muted = true;
@@ -24,7 +30,7 @@ navigator.mediaDevices
 
       const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream, "Other");
+        addVideoStream(video, userVideoStream, call.peer);
       });
     });
 
@@ -37,7 +43,8 @@ navigator.mediaDevices
 
 socket.on("user-disconnected", (userId) => {
   if (peers[userId]) {
-    peers[userId].call.close();
+    peers[userId].call && peers[userId].call.close();
+    peers[userId].parent && peers[userId].parent.remove();
     delete peers[userId];
   }
 });
