@@ -24,6 +24,8 @@ app.get("/:room", (req, res) => {
   let viewOptions = { roomId: req.params.room };
   if (port === localPort) {
     viewOptions["port"] = localPort;
+  } else {
+    viewOptions["port"] = "";
   }
   res.render("room", viewOptions);
 });
