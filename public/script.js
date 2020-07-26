@@ -2,7 +2,7 @@ const socket = io("/");
 const videoGrid = document.getElementById("video-grid");
 const myPeer = new Peer(undefined, {
   host: "/",
-  port: "3001"
+  port: "5001"
 });
 
 const myVideo = document.createElement("video");
@@ -44,7 +44,7 @@ myPeer.on("open", (id) => {
 });
 
 function connectToNewUser(userId, stream) {
-  //console.log(userId + " is connecting");
+  console.log(userId + " is connecting");
   const call = myPeer.call(userId, stream);
   const video = document.createElement("video");
 
@@ -63,7 +63,7 @@ function connectToNewUser(userId, stream) {
 }
 
 function addVideoStream(video, stream, userId) {
-  //console.log(userId + " is being added");
+  console.log(userId + " is being added");
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();

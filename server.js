@@ -17,22 +17,22 @@ app.get("/:room", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId) => {
-    //console.log(userId + " is joining " + roomId);
+    console.log(userId + " is joining " + roomId);
     socket.join(roomId);
     socket.to(roomId).broadcast.emit("user-connected", userId);
     socket.on("disconnect", () => {
-      //console.log(userId + " is leaving " + roomId);
+      console.log(userId + " is leaving " + roomId);
       socket.to(roomId).broadcast.emit("user-disconnected", userId);
     });
   });
 });
 
-server.listen(3000);
+server.listen(5000);
 
 // peer server
 var peerApp = express();
 // … Configure Express, and register necessary route handlers
-srv = peerApp.listen(3001);
+srv = peerApp.listen(5001);
 peerApp.use(
   "/",
   require("peer").ExpressPeerServer(srv /* , {

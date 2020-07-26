@@ -4,8 +4,8 @@
   "description": "As shown in video How To Create A Video Chat App With WebRTC (https://www.youtube.com/watch?v=DvlyzDZDEq4) from channel Web Dev Simplified & https://www.toptal.com/webrtc/taming-webrtc-with-peerjs",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server",
+    "dev": "nodemon server"
   },
   "keywords": [],
   "author": "",
