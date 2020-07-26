@@ -1,9 +1,17 @@
+const port = process.env.PORT || 5000;
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const { v4: uuidV4 } = require("uuid");
+const peerServer = require("peer").ExpressPeerServer(server, {
+  path: "/myapp"
+});
 
+app.use("/peerjs", peerServer);
+
+const io = require("socket.io")(server, {
+  transports: ["polling"]
+});
+const { v4: uuidV4 } = require("uuid");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
@@ -12,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:room", (req, res) => {
-  res.render("room", { roomId: req.params.room });
+  res.render("room", { roomId: req.params.room, port: port });
 });
 
 io.on("connection", (socket) => {
@@ -27,15 +35,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(process.env.PORT || 5000);
-
-// peer server
-var peerApp = express();
-// … Configure Express, and register necessary route handlers
-srv = peerApp.listen(5001);
-peerApp.use(
-  "/",
-  require("peer").ExpressPeerServer(srv /* , {
-    debug: true
-  } */)
-);
+server.listen(port);
