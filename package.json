@@ -2,10 +2,10 @@
   "name": "ZoomClone",
   "version": "1.0.0",
   "description": "As shown in video How To Create A Video Chat App With WebRTC (https://www.youtube.com/watch?v=DvlyzDZDEq4) from channel Web Dev Simplified & https://www.toptal.com/webrtc/taming-webrtc-with-peerjs",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
