@@ -21,35 +21,39 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:room", (req, res) => {
-  res.render("room", { roomId: req.params.room, port: localPort });
+  let viewOptions = { roomId: req.params.room };
+  if (port === localPort) {
+    viewOptions["port"] = localPort;
+  }
+  res.render("room", viewOptions);
 });
 
 io.on("connection", (socket) => {
   console.log("************ io connection established **************");
-  //peerServer.on("connection", (client) => {
-  //console.log("************ peerserver connected ************ ");
-  socket.on("join-room", (roomId, userId) => {
-    console.log(
-      "***************** " +
-        userId +
-        " is joining " +
-        roomId +
-        " ****************"
-    );
-    socket.join(roomId);
-    socket.to(roomId).broadcast.emit("user-connected", userId);
-    socket.on("disconnect", () => {
+  peerServer.on("connection", (client) => {
+    console.log("************ peerserver connected ************ ");
+    socket.on("join-room", (roomId, userId) => {
       console.log(
         "***************** " +
           userId +
-          " is leaving " +
+          " is joining " +
           roomId +
-          " *****************"
+          " ****************"
       );
-      socket.to(roomId).broadcast.emit("user-disconnected", userId);
+      socket.join(roomId);
+      socket.to(roomId).broadcast.emit("user-connected", userId);
+      socket.on("disconnect", () => {
+        console.log(
+          "***************** " +
+            userId +
+            " is leaving " +
+            roomId +
+            " *****************"
+        );
+        socket.to(roomId).broadcast.emit("user-disconnected", userId);
+      });
     });
   });
-  //});
 });
 
 server.listen(port);
