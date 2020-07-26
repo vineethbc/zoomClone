@@ -42,16 +42,20 @@ navigator.mediaDevices
   });
 
 socket.on("user-disconnected", (userId) => {
-  if (peers[userId]) {
-    peers[userId].call && peers[userId].call.close();
-    peers[userId].parent && peers[userId].parent.remove();
-    delete peers[userId];
-  }
+  destroyPeer(userId);
 });
 
 myPeer.on("open", (id) => {
   socket.emit("join-room", ROOM_ID, id);
 });
+
+function destroyPeer(userId) {
+  if (peers[userId]) {
+    peers[userId].call && peers[userId].call.close();
+    peers[userId].parent && peers[userId].parent.remove();
+    delete peers[userId];
+  }
+}
 
 function connectToNewUser(userId, stream) {
   console.log(userId + " is connecting");
@@ -63,7 +67,7 @@ function connectToNewUser(userId, stream) {
   });
 
   call.on("close", () => {
-    peers[userId].parent.remove();
+    destroyPeer(userId);
   });
 
   if (!peers[userId]) {
