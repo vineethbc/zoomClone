@@ -16,14 +16,14 @@ navigator.mediaDevices
     audio: true
   })
   .then((stream) => {
-    addVideoStream(myVideo, stream);
+    addVideoStream(myVideo, stream, "Self");
 
     myPeer.on("call", (call) => {
       call.answer(stream);
 
       const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
+        addVideoStream(video, userVideoStream, "Other");
       });
     });
 
@@ -34,7 +34,8 @@ navigator.mediaDevices
 
 socket.on("user-disconnected", (userId) => {
   if (peers[userId]) {
-    peers[userId].close();
+    peers[userId].call.close();
+    delete peers[userId];
   }
 });
 
@@ -43,24 +44,42 @@ myPeer.on("open", (id) => {
 });
 
 function connectToNewUser(userId, stream) {
+  //console.log(userId + " is connecting");
   const call = myPeer.call(userId, stream);
   const video = document.createElement("video");
 
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream);
+    addVideoStream(video, userVideoStream, userId);
   });
 
   call.on("close", () => {
-    video.remove();
+    peers[userId].parent.remove();
   });
 
-  peers[userId] = call;
+  if (!peers[userId]) {
+    peers[userId] = {};
+  }
+  peers[userId].call = call;
 }
 
-function addVideoStream(video, stream) {
+function addVideoStream(video, stream, userId) {
+  //console.log(userId + " is being added");
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
-  videoGrid.append(video);
+  let parent;
+  if (!peers[userId] || !peers[userId].parent) {
+    parent = document.createElement("div");
+    let label = document.createElement("label");
+    label.innerText = userId;
+    parent.appendChild(label);
+    parent.appendChild(video);
+    peers[userId] = {};
+    peers[userId].parent = parent;
+  } else {
+    parent = peers[userId].parent;
+    parent.append(video);
+  }
+  videoGrid.append(parent);
 }

@@ -17,9 +17,11 @@ app.get("/:room", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId) => {
+    //console.log(userId + " is joining " + roomId);
     socket.join(roomId);
     socket.to(roomId).broadcast.emit("user-connected", userId);
     socket.on("disconnect", () => {
+      //console.log(userId + " is leaving " + roomId);
       socket.to(roomId).broadcast.emit("user-disconnected", userId);
     });
   });
@@ -33,7 +35,7 @@ var peerApp = express();
 srv = peerApp.listen(3001);
 peerApp.use(
   "/",
-  require("peer").ExpressPeerServer(srv, {
+  require("peer").ExpressPeerServer(srv /* , {
     debug: true
-  })
+  } */)
 );
