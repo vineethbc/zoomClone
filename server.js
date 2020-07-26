@@ -26,30 +26,30 @@ app.get("/:room", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("************ io connection established **************");
-  peerServer.on("connection", (client) => {
-    console.log("************ peerserver connected ************ ");
-    socket.on("join-room", (roomId, userId) => {
+  //peerServer.on("connection", (client) => {
+  //console.log("************ peerserver connected ************ ");
+  socket.on("join-room", (roomId, userId) => {
+    console.log(
+      "***************** " +
+        userId +
+        " is joining " +
+        roomId +
+        " ****************"
+    );
+    socket.join(roomId);
+    socket.to(roomId).broadcast.emit("user-connected", userId);
+    socket.on("disconnect", () => {
       console.log(
         "***************** " +
           userId +
-          " is joining " +
+          " is leaving " +
           roomId +
-          " ****************"
+          " *****************"
       );
-      socket.join(roomId);
-      socket.to(roomId).broadcast.emit("user-connected", userId);
-      socket.on("disconnect", () => {
-        console.log(
-          "***************** " +
-            userId +
-            " is leaving " +
-            roomId +
-            " *****************"
-        );
-        socket.to(roomId).broadcast.emit("user-disconnected", userId);
-      });
+      socket.to(roomId).broadcast.emit("user-disconnected", userId);
     });
   });
+  //});
 });
 
 server.listen(port);
