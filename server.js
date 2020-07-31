@@ -7,7 +7,7 @@ const peerServer = require("peer").ExpressPeerServer(server, {
 
 const localPort = 5000;
 const port = process.env.PORT || localPort;
-const isProd = port == localPort;
+const isProd = false; //port == localPort;
 
 app.use("/peerjs", peerServer);
 
