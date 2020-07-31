@@ -21,7 +21,7 @@ if (isProd) {
 
 const myPeer = new Peer(undefined, peerOptions);
 const peerMap = new Map();
-let loggedInUserId;
+let loggedInUserId = myPeer.id;
 
 const myVideo = document.createElement("video");
 myVideo.muted = true;
@@ -67,7 +67,6 @@ socket.on("user-disconnected", (userId, userName) => {
 });
 
 myPeer.on("open", (id) => {
-  loggedInUserId = myPeer.id;
   socket.emit("join-room", ROOM_ID, id, userName);
 });
 
