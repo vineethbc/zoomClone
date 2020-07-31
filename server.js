@@ -1,11 +1,13 @@
-const localPort = 5000;
-const port = process.env.PORT || localPort;
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
 const peerServer = require("peer").ExpressPeerServer(server, {
   path: "/myapp"
 });
+
+const localPort = 5000;
+const port = process.env.PORT || localPort;
+const isProd = port == localPort;
 
 app.use("/peerjs", peerServer);
 
@@ -17,7 +19,7 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-  res.redirect(`/${uuidV4()}`);
+  res.redirect(`/room-${uuidV4()}`);
 });
 
 app.get("/:room", (req, res) => {
@@ -31,31 +33,46 @@ app.get("/:room", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("************ io connection established **************");
+  log("************ io connection established **************");
   peerServer.on("connection", (client) => {
-    console.log("************ peerserver connected ************ ");
-    socket.on("join-room", (roomId, userId) => {
-      console.log(
+    log("************ peerserver connected ************ ");
+    socket.on("join-room", (roomId, userId, userName) => {
+      log(
         "***************** " +
           userId +
+          " : " +
+          userName +
           " is joining " +
           roomId +
           " ****************"
       );
       socket.join(roomId);
-      socket.to(roomId).broadcast.emit("user-connected", userId);
+      socket.to(roomId).broadcast.emit("user-connected", userId, userName);
       socket.on("disconnect", () => {
-        console.log(
+        log(
           "***************** " +
             userId +
+            " : " +
+            userName +
             " is leaving " +
             roomId +
             " *****************"
         );
-        socket.to(roomId).broadcast.emit("user-disconnected", userId);
+        socket.to(roomId).broadcast.emit("user-disconnected", userId, userName);
       });
     });
+  });
+
+  peerServer.on("disconnect", (client) => {
+    let { id } = client;
+    log("****** peer " + id + " disconnected*********");
   });
 });
 
 server.listen(port);
+
+function log(message) {
+  if (!isProd) {
+    console.log(message);
+  }
+}
