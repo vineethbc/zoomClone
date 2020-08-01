@@ -21,11 +21,7 @@ if (isProd) {
 
 const myPeer = new Peer(undefined, peerOptions);
 const peerMap = new Map();
-let loggedInUserId = myPeer.id;
-
-const myVideo = document.createElement("video");
-myVideo.muted = true;
-myVideo.controls = true;
+let loggedInUserId;
 
 navigator.mediaDevices
   .getUserMedia({
@@ -33,23 +29,15 @@ navigator.mediaDevices
     audio: true
   })
   .then((stream) => {
-    // display users video
-    addVideoStream(myVideo, stream, loggedInUserId, userName);
+    loggedInUserId = myPeer.id;
+    addVideoStream(stream, loggedInUserId, userName);
     addAsMainVideo(loggedInUserId, stream, userName);
 
     myPeer.on("call", (call) => {
       call.answer(stream);
-
-      const video = document.createElement("video");
-      video.muted = true;
       const peerUserName = call.metadata.userName;
       call.on("stream", (userVideoStream) => {
-        addVideoStream(
-          video,
-          userVideoStream,
-          call.peer,
-          peerUserName || call.peer
-        );
+        addVideoStream(userVideoStream, call.peer, peerUserName || call.peer);
       });
     });
 
@@ -106,11 +94,8 @@ function connectToNewUser(peerUserId, stream, peerUserName) {
       userName
     }
   });
-  const video = document.createElement("video");
-  video.muted = true;
-
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream, peerUserId, peerUserName);
+    addVideoStream(userVideoStream, peerUserId, peerUserName);
   });
 
   call.on("close", () => {
@@ -131,24 +116,18 @@ function connectToNewUser(peerUserId, stream, peerUserName) {
   }
 }
 
-function addVideoStream(video, stream, userId, userName) {
+function addVideoStream(stream, userId, userName) {
   log(userName + " is being added");
-  video.srcObject = stream;
+  /* video.srcObject = stream;
   video.controls = true;
   video.addEventListener("loadedmetadata", () => {
     video.play();
-  });
+  }); */
+  let video = generateVideoElement(stream);
   let parent;
 
   if (!peerMap.has(userId) || !peerMap.get(userId).parent) {
-    parent = document.createElement("div");
-    parent.classList.add(videoContainerClass);
-    parent.dataset.userId = userId;
-    let label = document.createElement("label");
-    label.innerText = userName || userId;
-    parent.appendChild(label);
-    parent.appendChild(video);
-
+    parent = generateVideoContainer(userId, video, userName);
     let peer = {};
     if (peerMap.has(userId)) {
       peer = peerMap.get(userId);
@@ -165,21 +144,11 @@ function addVideoStream(video, stream, userId, userName) {
 
 function addAsMainVideo(userId, stream, userName) {
   if (mainVideo.dataset.userId !== userId) {
-    const video = document.createElement("video");
-    video.muted = true;
-    video.controls = true;
+    const video = generateVideoElement(stream);
     mainVideo.innerHTML = "";
     log(userName + " is being added");
     mainVideo.dataset.userId = userId;
-    video.srcObject = stream;
-    video.controls = true;
-    video.addEventListener("loadedmetadata", () => {
-      video.play();
-    });
-    let label = document.createElement("label");
-    label.innerText = userName || userId;
-    mainVideo.appendChild(label);
-    mainVideo.appendChild(video);
+    generateVideoContainer(userId, video, userName, mainVideo);
   }
 }
 
@@ -187,4 +156,31 @@ function log(message) {
   if (!isProd) {
     console.log(message);
   }
+}
+
+function generateVideoElement(stream) {
+  const video = document.createElement("video");
+  video.srcObject = stream;
+  video.controls = true;
+  video.addEventListener("loadedmetadata", () => {
+    video.play();
+  });
+  return video;
+}
+
+function generateVideoContainer(userId, video, userName, parentElement) {
+  let parent = parentElement || document.createElement("div");
+  if (!parentElement) {
+    parent.classList.add(videoContainerClass);
+    parent.classList.add("center-content");
+  }
+  parent.dataset.userId = userId;
+  let labelParent = document.createElement("div");
+  labelParent.classList.add("user-label");
+  let label = document.createElement("label");
+  label.innerText = userName || userId;
+  labelParent.appendChild(label);
+  parent.appendChild(labelParent);
+  parent.appendChild(video);
+  return parent;
 }
