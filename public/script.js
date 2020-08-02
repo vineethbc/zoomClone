@@ -60,8 +60,12 @@ myPeer.on("open", (id) => {
 
 videoGrid.addEventListener("click", (e) => {
   let target = e.target;
-  if (target.classList.contains(videoContainerClass)) {
-    let { userId } = target.dataset;
+  let isUserLabel = target.classList.contains("user-label");
+  if (isUserLabel || target.parentElement.classList.contains("user-label")) {
+    let videoContainer = isUserLabel
+      ? target.parentElement
+      : target.parentElement.parentElement;
+    let { userId } = videoContainer.dataset;
     let { stream, userName } = peerMap.get(userId);
     addAsMainVideo(userId, stream, userName);
   }
@@ -118,11 +122,6 @@ function connectToNewUser(peerUserId, stream, peerUserName) {
 
 function addVideoStream(stream, userId, userName) {
   log(userName + " is being added");
-  /* video.srcObject = stream;
-  video.controls = true;
-  video.addEventListener("loadedmetadata", () => {
-    video.play();
-  }); */
   let video = generateVideoElement(stream);
   let parent;
 
@@ -171,8 +170,12 @@ function generateVideoElement(stream) {
 function generateVideoContainer(userId, video, userName, parentElement) {
   let parent = parentElement || document.createElement("div");
   if (!parentElement) {
-    parent.classList.add(videoContainerClass);
-    parent.classList.add("center-content");
+    parent.classList.add(
+      videoContainerClass,
+      "col-sm-4",
+      "col-lg-2",
+      "col-md-6"
+    );
   }
   parent.dataset.userId = userId;
   let labelParent = document.createElement("div");

@@ -8,9 +8,14 @@
       const PORT = "<%= port %>";
     </script>
     <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-    <!-- for local dev <script src="peerjs.min.js"></script> -->
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="script.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
     <title>Zoom Clone</title>
     <style>
       body,
@@ -26,31 +31,21 @@
         margin: auto;
       }
       #main-video {
-        width: 30%;
-        height: 30%;
+        overflow: hidden;
+        margin: 5px;
       }
-      #video-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, 300px);
-        grid-auto-rows: 300px;
-        /* column-gap: 2rem; */
-      }
-
       video {
         height: 95%;
         width: 95%;
         object-fit: cover;
       }
-
       .video-container {
-        border: 1px solid white;
         overflow: hidden;
+        margin: 5px;
       }
-
       .user-label {
         text-align: center;
       }
-
       .user-label label {
         text-overflow: ellipsis;
         overflow: hidden;
@@ -58,48 +53,14 @@
         max-width: 10em;
         display: inline-block;
       }
-
-      /* Smartphones (portrait) ----------- */
-      @media only screen and (orientation: portrait) {
-        #main-video {
-          width: 100%;
-          height: 100%;
-        }
-        .video-container {
-          width: 25vh;
-          height: 25vh;
-        }
-      }
-
-      /* tablet (landscape) ----------- */
-      @media only screen and (orientation: landscape) {
-        #main-video {
-          width: 50%;
-          height: 50%;
-        }
-        .video-container {
-          width: 30vh;
-          height: 30vh;
-        }
-      }
-
-      @media only screen and (min-width: 1224px) {
-        #main-video {
-          width: 40%;
-          height: 40%;
-        }
-        .video-container {
-          width: 30vh;
-          height: 30vh;
-        }
-      }
     </style>
   </head>
   <body>
-    <div id="container">
-      <div id="main-video" class="center-content"></div>
-      <hr />
-      <div id="video-grid"></div>
+    <div id="container" class="container-fluid">
+      <div class="row justify-content-md-center">
+        <div id="main-video" class="col-sm-8 col-lg-5 col-md-8"></div>
+      </div>
+      <div id="video-grid" class="row"></div>
     </div>
   </body>
 </html>
