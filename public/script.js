@@ -161,6 +161,7 @@ function generateVideoElement(stream) {
   const video = document.createElement("video");
   video.srcObject = stream;
   video.controls = true;
+  video.muted = true;
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
