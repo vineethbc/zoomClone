@@ -174,17 +174,20 @@ function generateVideoContainer(userId, video, userName, parentElement) {
     parent.classList.add(
       videoContainerClass,
       "col-sm-4",
-      "col-lg-2",
+      "col-lg-3",
       "col-md-6"
     );
   }
   parent.dataset.userId = userId;
+  let cardDiv = document.createElement("div");
+  cardDiv.classList.add("card", "h-100", "center-content", "mb-1");
   let labelParent = document.createElement("div");
   labelParent.classList.add("user-label");
   let label = document.createElement("label");
   label.innerText = userName || userId;
   labelParent.appendChild(label);
-  parent.appendChild(labelParent);
-  parent.appendChild(video);
+  cardDiv.appendChild(labelParent);
+  cardDiv.appendChild(video);
+  parent.appendChild(cardDiv);
   return parent;
 }
