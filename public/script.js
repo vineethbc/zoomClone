@@ -62,10 +62,8 @@ videoGrid.addEventListener("click", (e) => {
   let target = e.target;
   let isUserLabel = target.classList.contains("user-label");
   if (isUserLabel || target.parentElement.classList.contains("user-label")) {
-    let videoContainer = isUserLabel
-      ? target.parentElement
-      : target.parentElement.parentElement;
-    let { userId } = videoContainer.dataset;
+    let userLabel = isUserLabel ? target : target.parentElement;
+    let { userId } = userLabel.dataset;
     let { stream, userName } = peerMap.get(userId);
     addAsMainVideo(userId, stream, userName);
   }
@@ -135,8 +133,7 @@ function addVideoStream(stream, userId, userName) {
     peerMap.set(userId, peer);
   } else {
     parent = peerMap.get(userId).parent;
-    parent.lastElementChild.remove();
-    parent.append(video);
+    parent.querySelector("video").replaceWith;
   }
   videoGrid.prepend(parent);
 }
@@ -178,7 +175,6 @@ function generateVideoContainer(userId, video, userName, parentElement) {
       "col-md-6"
     );
   }
-  parent.dataset.userId = userId;
   let cardDiv = document.createElement("div");
   cardDiv.classList.add("card", "h-100", "center-content", "mb-1");
   let labelParent = document.createElement("div");
@@ -186,6 +182,7 @@ function generateVideoContainer(userId, video, userName, parentElement) {
   let label = document.createElement("label");
   label.innerText = userName || userId;
   labelParent.appendChild(label);
+  labelParent.dataset.userId = userId;
   cardDiv.appendChild(labelParent);
   cardDiv.appendChild(video);
   parent.appendChild(cardDiv);
