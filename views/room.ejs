@@ -40,6 +40,18 @@
       .video-container {
         overflow: hidden;
         margin: 5px;
+        animation: fadein 2s;
+        transition: all 1s ease-in-out;
+      }
+      .fade-out {
+        animation: fadeout 2s;
+      }
+      .hidden {
+        width: 0;
+        height: 0;
+        opacity: 0;
+        margin: 0;
+        padding: 0;
       }
       .user-label {
         text-align: center;
@@ -50,13 +62,31 @@
         white-space: nowrap;
         max-width: 10em;
         display: inline-block;
+        cursor: pointer;
+      }
+
+      @keyframes fadein {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes fadeout {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
       }
     </style>
   </head>
   <body>
     <div id="container" class="container-fluid">
       <div class="row justify-content-md-center">
-        <div id="main-video" class="col-sm-8 col-lg-5 col-md-6"></div>
+        <div id="main-video" class="col-sm-8 col-lg-4 col-md-6"></div>
       </div>
       <div id="video-grid" class="row"></div>
     </div>

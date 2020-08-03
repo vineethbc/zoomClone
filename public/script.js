@@ -5,6 +5,7 @@ const mainVideo = document.getElementById("main-video");
 
 const userName = prompt("Enter username!") || "User";
 const videoContainerClass = "video-container";
+const hiddenClass = "hidden";
 
 const peerOptions = {
   host: "/",
@@ -73,7 +74,16 @@ function destroyPeer(destroyUserId) {
   if (peerMap.has(destroyUserId)) {
     let peer = peerMap.get(destroyUserId);
     peer.call && peer.call.close();
-    peer.parent && peer.parent.remove();
+    if (peer.parent) {
+      peer.parent.classList.add("fade-out");
+      let hideDelayed = (elem) => {
+        setTimeout(() => {
+          elem.classList.add(hiddenClass);
+          elem.remove();
+        }, 2100);
+      };
+      hideDelayed(peer.parent);
+    }
     delete peer;
     peerMap.delete(destroyUserId);
   }
@@ -159,6 +169,7 @@ function generateVideoElement(stream) {
   video.srcObject = stream;
   video.controls = true;
   video.muted = true;
+  video.poster = "avatar.png";
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
@@ -172,7 +183,8 @@ function generateVideoContainer(userId, video, userName, parentElement) {
       videoContainerClass,
       "col-sm-4",
       "col-lg-3",
-      "col-md-6"
+      "col-md-6",
+      hiddenClass
     );
   }
   let cardDiv = document.createElement("div");
@@ -186,5 +198,8 @@ function generateVideoContainer(userId, video, userName, parentElement) {
   cardDiv.appendChild(labelParent);
   cardDiv.appendChild(video);
   parent.appendChild(cardDiv);
+  setTimeout(() => {
+    parent.classList.remove(hiddenClass);
+  }, 1000);
   return parent;
 }
