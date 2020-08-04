@@ -34,9 +34,15 @@
         margin: 5px;
       }
       video {
-        width: 95%;
         object-fit: cover;
+        width: 95%;
         max-width: 95%;
+        max-height: 95%;
+        height: 95%;
+      }
+      #video-grid .card {
+        max-height: 30vh;
+        overflow: hidden;
       }
       .video-container {
         overflow: hidden;
@@ -64,6 +70,7 @@
         max-width: 10em;
         display: inline-block;
         cursor: pointer;
+        margin: 0;
       }
 
       @keyframes fadein {
